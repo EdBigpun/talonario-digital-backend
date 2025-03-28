@@ -1,0 +1,9 @@
+# Ignorar dependencias
+node_modules/
+package-lock.json
+yarn.lock
+
+# Ignorar variables de entorno y credenciales
+.env
+src/config/firebaseKey.json
+firebaseKey.json
