@@ -1,3 +1,4 @@
+// src/controllers/facturasController.js
 import { bucket } from "../config/firebase.js";
 import { PDFDocument } from "pdf-lib";
 import path from "path";
@@ -5,13 +6,21 @@ import { v4 as uuidv4 } from "uuid";
 import pool from "../config/db.js";
 import fs from "fs";
 
+// Importar los modelos necesarios
+import {
+  crearFactura,
+  listarFacturas,
+  obtenerFacturaPorId,
+  eliminarFactura,
+  actualizarFactura,
+} from "../models/facturasModel.js";
+
 // Obtener lista de facturas
 export const obtenerFacturas = async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM facturas");
-    res.json(result.rows);
+    const facturas = await listarFacturas();
+    res.json(facturas);
   } catch (error) {
-    console.error("Error obteniendo facturas:", error);
     res.status(500).json({ error: "Error obteniendo facturas" });
   }
 };
@@ -19,14 +28,9 @@ export const obtenerFacturas = async (req, res) => {
 // Agregar una factura (sin PDF)
 export const agregarFactura = async (req, res) => {
   try {
-    const { cliente_id, monto, fecha } = req.body;
-    const result = await pool.query(
-      "INSERT INTO facturas (cliente_id, monto, fecha) VALUES ($1, $2, $3) RETURNING *",
-      [cliente_id, monto, fecha]
-    );
-    res.json(result.rows[0]);
+    const factura = await crearFactura(req.body);
+    res.json(factura);
   } catch (error) {
-    console.error("Error agregando factura:", error);
     res.status(500).json({ error: "Error agregando factura" });
   }
 };
