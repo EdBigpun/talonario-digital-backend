@@ -94,6 +94,13 @@ export const generarFactura = async (req, res) => {
 
     console.log(" Archivo subido con URL:", publicUrl);
 
+    // Verificar que clienteId existe antes de insertar en la base de datos
+    if (!clienteId) {
+      return res
+        .status(400)
+        .json({ error: "El campo clienteId es obligatorio." });
+    }
+
     // Guardar la factura en la base de datos
     await pool.query(
       "INSERT INTO facturas (cliente_id, archivo_url, total, fecha_emision) VALUES ($1, $2, $3, $4)",
